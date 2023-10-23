@@ -29,6 +29,8 @@ export const HomeScreen = () => {
   
   const AddNewAlert = () => {
     //navigation.navigate('ProductDetail', { product: product });
+    setSelectedStock('')
+    setpriceAlert('')
     Keyboard.dismiss()
     setisModalVisible(true)
     const alreadyExistingStocks = context?.stocksToWatch ? context.stocksToWatch : []
