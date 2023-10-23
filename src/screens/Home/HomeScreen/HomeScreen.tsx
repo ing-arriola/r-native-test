@@ -1,5 +1,5 @@
-import { useContext, useState } from 'react';
-import { View, Keyboard} from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import { View, Keyboard, TouchableOpacity} from 'react-native';
 
 import { Button } from '../../../components/Button';
 import * as S from './styles';
@@ -11,12 +11,13 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { InputText } from '../../../components/Input';
 import StockContext from '../../../context/Stockcontext';
 import Modal from "react-native-modal";
+//import { finnhubApi } from '../../../api/Api';
 
 export const HomeScreen = () => {
   const context = useContext(StockContext)
   const [priceAlert, setpriceAlert] = useState<string>('');
+  const [stocksAvailable, setstocksAvailable] = useState([])
   const availableStocks = [{"description":"Binance ASTR/BTC","displaySymbol":"ASTR/BTC","symbol":"BINANCE:ASTRBTC"},{"description":"Binance WBTC/USDT","displaySymbol":"WBTC/USDT","symbol":"BINANCE:WBTCUSDT"},{"currency":"USD","description":"AMAZON.COM INC","displaySymbol":"AMZN","figi":"BBG000BVPV84","isin":null,"mic":"XNAS","shareClassFIGI":"BBG001S5PQL7","symbol":"AMZN","symbol2":"","type":"Common Stock"},{"currency":"USD","description":"MICROSOFT CORP","displaySymbol":"MSFT","figi":"BBG000BPH459","isin":null,"mic":"XNAS","shareClassFIGI":"BBG001S5TD05","symbol":"MSFT","symbol2":"","type":"Common Stock"}]
-  
   const [isModalVisible, setisModalVisible] = useState(false)
   //Dropdown
   const [open, setOpen] = useState(false);
@@ -26,11 +27,15 @@ export const HomeScreen = () => {
     value: item.symbol
   })));
 
-  
+  /* const getAvailableStocks = async() => {
+    const res = await finnhubApi.get('/')
+  }
+
+  useEffect(()=>{
+    getAvailableStocks()
+  },[])
+   */
   const AddNewAlert = () => {
-    //navigation.navigate('ProductDetail', { product: product });
-    setSelectedStock('')
-    setpriceAlert('')
     Keyboard.dismiss()
     setisModalVisible(true)
     const alreadyExistingStocks = context?.stocksToWatch ? context.stocksToWatch : []
@@ -40,15 +45,17 @@ export const HomeScreen = () => {
     }
     const stocksToSet = [...alreadyExistingStocks,newStockTobeWatched]
     context?.setstocksToWatch(stocksToSet)
-    
   };
-  
 
-  
+  const onCloseModal = () => {
+          setisModalVisible(false)
+          setSelectedStock('')
+          setpriceAlert('')
+  }
 
   return (
     <S.Container>
-      <View style={{padding:20}} >
+      <View style={{padding:20}}  >
         <S.TitleContainer>
           <S.TitleBold>{ADD_AN_ALERT}</S.TitleBold>
         </S.TitleContainer>
@@ -85,7 +92,7 @@ export const HomeScreen = () => {
           </S.TextSecondary>
           <Button 
             label='Accept' 
-            onPress={()=>setisModalVisible(false)}
+            onPress={onCloseModal}
             size='small'  
           />
         </S.CardContainer>
