@@ -1,5 +1,5 @@
 import { useCallback, useContext, useState } from 'react';
-import { Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import StockContext from '../../context/Stockcontext';
 import {
@@ -58,11 +58,15 @@ export const AlertsScreen = () => {
       <S.H1>{ALERTS_CURRENTLY_ACTIVATED}</S.H1>
       <S.AlertsContainer>
         {
-          stocksToWatch ? stocksToWatch.map((stock,index) => (
-            <View key={index}>
+          stocksToWatch ? 
+          <FlatList
+          data={stocksToWatch}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View>
               <S.CardContainer>
                 <Text>
-                  {JSON.stringify(stock.stockToWatch)}
+                  {JSON.stringify(item.stockToWatch)}
                 </Text>
                 <Text>
                   {`Current price: ${currentStockPrice}`}
@@ -72,7 +76,9 @@ export const AlertsScreen = () => {
                 </Text>
               </S.CardContainer>
             </View>
-          )) : <View style={{ display:'flex',justifyContent:'center',alignItems:'center'}} >
+          )}
+        />
+          : <View style={{ display:'flex',justifyContent:'center',alignItems:'center'}} >
             <S.StyledImage source={require('../../../assets/void.png')}/>
             <Text>There are no alerts currently activated</Text>
             </View>
